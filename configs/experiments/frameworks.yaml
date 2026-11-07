@@ -1,0 +1,52 @@
+# Tables I and II: FixMatch, UniMatch V1 and UniMatch V2, each with the paired CutMix baseline
+# and with ChangeMix, plus the Labeled Only and Fully Supervised references. DPT/DINOv2-Base.
+#
+#   python run_experiments.py configs/experiments/frameworks.yaml          # list the runs
+#   python run_experiments.py configs/experiments/frameworks.yaml --run    # train them
+#
+# Each entry expands to all the combinations of its list-valued fields. A run trains
+# <script>.py with configs/<dataset>.yaml on splits/<dataset>/<split>/ (split "full": the
+# whole training set); every other field is passed to the script as --<field> <value>.
+
+runs:
+  # Labeled Only
+  - script: supervised
+    dataset: [levir, whu]
+    split: ['5%', '10%', '20%', '40%']
+    backbone: dinov2_base
+    seed: 42
+
+  # Fully Supervised
+  - script: supervised
+    dataset: [levir, whu]
+    split: full
+    supervision: full
+    backbone: dinov2_base
+    seed: 42
+
+  # 5% budget; WHU-CD with the supervised cold start (first 10% of the iterations, Sec. IV-C3)
+  - script: [fixmatch, fixmatch_changemix, unimatch_v1, unimatch_v1_changemix, unimatch_v2, unimatch_v2_changemix]
+    dataset: levir
+    split: '5%'
+    backbone: dinov2_base
+    seed: 42
+  - script: [fixmatch, fixmatch_changemix, unimatch_v1, unimatch_v1_changemix, unimatch_v2, unimatch_v2_changemix]
+    dataset: whu
+    split: '5%'
+    backbone: dinov2_base
+    seed: 42
+    only_sup_ratio: 0.1
+
+  # 10% and 40% budgets
+  - script: [fixmatch, fixmatch_changemix, unimatch_v1, unimatch_v1_changemix, unimatch_v2, unimatch_v2_changemix]
+    dataset: [levir, whu]
+    split: ['10%', '40%']
+    backbone: dinov2_base
+    seed: 42
+
+  # 20% budget: three seeds (mean and standard deviation in Tables I and II)
+  - script: [fixmatch, fixmatch_changemix, unimatch_v1, unimatch_v1_changemix, unimatch_v2, unimatch_v2_changemix]
+    dataset: [levir, whu]
+    split: '20%'
+    backbone: dinov2_base
+    seed: [42, 43, 44]

@@ -1,0 +1,34 @@
+# WHU-CD, 256 x 256 tiles of the official train / val / test splits.
+# Default configuration of the paper (Sec. IV-C).
+
+# arguments for dataset
+dataset: whu
+nclass: 2
+crop_size: 252
+data_root: ./data/WHU-CD
+
+# arguments for training
+epochs: 60
+batch_size: 8      # per GPU x 1 GPU
+lr: 0.000005       # DPT/DINOv2 (AdamW): encoder lr; the DPT decoder uses lr * lr_multi = 2e-4
+lr_multi: 40.0     # (the DeepLabV3+ scripts use SGD with lr 0.02, set in the scripts)
+conf_thresh: 0.95  # tau, confidence threshold of the unsupervised loss
+
+# arguments for model
+model: dpt
+backbone: dinov2_base  # dinov2_base or dinov2_small (or --backbone)
+lock_backbone: False
+
+# ChangeMix, used by the *_changemix.py scripts (Sec. III-C and IV-C)
+changemix:
+  bank_size: 500               # B, Instance Bank capacity (FIFO)
+  min_conf_thresh: 0.95        # tau_min, mean confidence of a pseudo-labeled instance
+  max_conf_thresh: 0.99        # tau_max (ground-truth instances are always accepted)
+  min_instance_size: 8         # s_min, bounding-box side (pixels)
+  max_instance_size: 192       # s_max, bounding-box side (pixels)
+  padding: 32                  # p, context pixels around the bounding box
+  instances_per_image: 10      # N, instances pasted per image (at most)
+  paste_attempts: 10           # L, placement attempts per instance
+  paste_prob: 0.5              # p_mix, probability of applying ChangeMix to a strong view
+  prob_augment_labeled: 0.5    # probability of extracting labeled instances from the strong view (else weak)
+  prob_augment_unlabeled: 0.5  # same, for the pseudo-labeled instances

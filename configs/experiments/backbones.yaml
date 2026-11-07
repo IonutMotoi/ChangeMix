@@ -1,0 +1,79 @@
+# Tables III and IV: UniMatch V2 with the paired CutMix baseline and with ChangeMix on
+# DPT/DINOv2-Small and DeepLabV3+/ResNet-50, with the Labeled Only and Fully Supervised
+# references. The DPT/DINOv2-Base rows are the runs of frameworks.yaml.
+#
+#   python run_experiments.py configs/experiments/backbones.yaml          # list the runs
+#   python run_experiments.py configs/experiments/backbones.yaml --run    # train them
+
+runs:
+  # ---- DPT/DINOv2-Small ----
+  # Labeled Only
+  - script: supervised
+    dataset: [levir, whu]
+    split: ['5%', '10%', '20%', '40%']
+    backbone: dinov2_small
+    seed: 42
+
+  # Fully Supervised
+  - script: supervised
+    dataset: [levir, whu]
+    split: full
+    supervision: full
+    backbone: dinov2_small
+    seed: 42
+
+  # UniMatch V2 / + ChangeMix; WHU-CD 5% with the supervised cold start (Sec. IV-C3)
+  - script: [unimatch_v2, unimatch_v2_changemix]
+    dataset: levir
+    split: ['5%', '10%', '20%', '40%']
+    backbone: dinov2_small
+    seed: 42
+  - script: [unimatch_v2, unimatch_v2_changemix]
+    dataset: whu
+    split: '5%'
+    backbone: dinov2_small
+    seed: 42
+    only_sup_ratio: 0.1
+  - script: [unimatch_v2, unimatch_v2_changemix]
+    dataset: whu
+    split: ['10%', '20%', '40%']
+    backbone: dinov2_small
+    seed: 42
+
+  # ---- DeepLabV3+/ResNet-50: SGD, lr 0.02, momentum 0.9, weight decay 1e-4 ----
+  # Labeled Only
+  - script: supervised
+    dataset: [levir, whu]
+    split: ['5%', '10%', '20%', '40%']
+    model: deeplabv3plus
+    backbone: resnet50
+    lr: 0.02
+    seed: 42
+
+  # Fully Supervised
+  - script: supervised
+    dataset: [levir, whu]
+    split: full
+    supervision: full
+    model: deeplabv3plus
+    backbone: resnet50
+    lr: 0.02
+    seed: 42
+
+  # UniMatch V2 / + ChangeMix, all with the supervised cold start (Sec. IV-C3);
+  # WHU-CD 20%: three seeds (mean and standard deviation in Table IV)
+  - script: [unimatch_v2_deeplab, unimatch_v2_changemix_deeplab]
+    dataset: levir
+    split: ['5%', '10%', '20%', '40%']
+    seed: 42
+    only_sup_ratio: 0.1
+  - script: [unimatch_v2_deeplab, unimatch_v2_changemix_deeplab]
+    dataset: whu
+    split: ['5%', '10%', '40%']
+    seed: 42
+    only_sup_ratio: 0.1
+  - script: [unimatch_v2_deeplab, unimatch_v2_changemix_deeplab]
+    dataset: whu
+    split: '20%'
+    seed: [42, 43, 44]
+    only_sup_ratio: 0.1

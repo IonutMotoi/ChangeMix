@@ -1,0 +1,48 @@
+# Tables VI-IX: sensitivity of UniMatch V2 + ChangeMix to the Instance Bank hyperparameters,
+# 20% budget, seed 42, on LEVIR-CD and WHU-CD with DPT/DINOv2-Base and DPT/DINOv2-Small.
+# One hyperparameter differs from the default configuration (configs/<dataset>.yaml) at a
+# time; the default runs are those of frameworks.yaml (Base) and backbones.yaml (Small).
+#
+#   python run_experiments.py configs/experiments/hyperparameters.yaml          # list the runs
+#   python run_experiments.py configs/experiments/hyperparameters.yaml --run    # train them
+
+runs:
+  # Bank size B (default 500)
+  - script: unimatch_v2_changemix
+    dataset: [levir, whu]
+    split: '20%'
+    backbone: [dinov2_base, dinov2_small]
+    seed: 42
+    bank_size: [20, 100, 2500]
+
+  # Max instance size s_max (default 192)
+  - script: unimatch_v2_changemix
+    dataset: [levir, whu]
+    split: '20%'
+    backbone: [dinov2_base, dinov2_small]
+    seed: 42
+    max_instance_size: [128, 160, 256]
+
+  # Min confidence tau_min (default 0.95)
+  - script: unimatch_v2_changemix
+    dataset: [levir, whu]
+    split: '20%'
+    backbone: [dinov2_base, dinov2_small]
+    seed: 42
+    min_conf_thresh: [0.925, 0.975]
+
+  # Max confidence tau_max (default 0.99)
+  - script: unimatch_v2_changemix
+    dataset: [levir, whu]
+    split: '20%'
+    backbone: [dinov2_base, dinov2_small]
+    seed: 42
+    max_conf_thresh: [0.975, 1.0]
+
+  # Padding p (default 32)
+  - script: unimatch_v2_changemix
+    dataset: [levir, whu]
+    split: '20%'
+    backbone: [dinov2_base, dinov2_small]
+    seed: 42
+    padding: [0, 4, 16, 64]
